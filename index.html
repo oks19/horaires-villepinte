@@ -399,7 +399,6 @@
     const display = new Date(MOIS_ANNEE, MOIS_INDEX, day);
     document.getElementById("greg").textContent =
       `${JOURS[display.getDay()]} ${day} ${MOIS[MOIS_INDEX]} ${MOIS_ANNEE}`;
-    document.getElementById("hijri").textContent = rec.h + " هـ";
     const moisNom = MOIS[MOIS_INDEX].charAt(0).toUpperCase() + MOIS[MOIS_INDEX].slice(1);
     document.getElementById("periode").textContent = `${moisNom} ${MOIS_ANNEE}`;
 
@@ -410,6 +409,11 @@
     const salahIdx = [0,2,3,4,5];
 
     const M = rec.t.map(toMin);
+
+    // Le jour hégirien commence au Maghrib : dès le Maghrib, la date hijri
+    // affichée est celle du lendemain grégorien.
+    const hijriRec = (nowMin >= M[4]) ? demain : rec;
+    document.getElementById("hijri").textContent = hijriRec.h + " هـ";
 
     // Prochaine prière (pour le bandeau du haut).
     let nextIdx = -1;
