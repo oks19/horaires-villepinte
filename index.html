@@ -229,6 +229,36 @@
   .jumua b { font-family: "Marcellus", serif; font-weight: 400; }
   :root[data-theme="dark"] .jumua, :root:not([data-theme="light"]) .jumua { color: var(--gold); }
 
+  .maj-card {
+    margin-top: 10px;
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: 18px;
+    padding: 30px 22px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .maj-icon { font-size: 34px; line-height: 1; }
+  .maj-date {
+    margin-top: 8px;
+    font-family: "Marcellus", serif;
+    font-size: 17px;
+    color: var(--ink-soft);
+  }
+  .maj-title {
+    margin-top: 16px;
+    font-family: "Marcellus", serif;
+    font-size: 21px;
+    color: var(--gold-deep);
+  }
+  :root[data-theme="dark"] .maj-title,
+  :root:not([data-theme="light"]) .maj-title { color: var(--gold); }
+  .maj-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
   .foot {
     text-align: center;
     margin-top: 12px;
@@ -258,6 +288,7 @@
     <div class="arabic-name">مسجد فيلبانت</div>
   </div>
 
+  <div id="contenu">
   <div class="datecard">
     <div class="greg" id="greg">—</div>
     <div class="hijri" id="hijri">—</div>
@@ -271,6 +302,16 @@
 
   <div class="jumua" id="jumua" hidden>
     <span>🕌</span><span>Salât al-Jumu'a &nbsp;·&nbsp; <b>13:15</b></span>
+  </div>
+  </div>
+
+  <div id="maj" hidden>
+    <div class="maj-card">
+      <div class="maj-icon">🌙</div>
+      <div class="maj-date" id="maj-date">—</div>
+      <div class="maj-title">Horaires en cours de mise à jour</div>
+      <div class="maj-text">Les horaires de ce mois seront disponibles très bientôt, in shâ'Allah. Merci de revenir un peu plus tard.</div>
+    </div>
   </div>
 
   <div class="foot">
@@ -331,11 +372,28 @@
   function toMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
 
   function render(){
-    const now = new Date();
+    // Date réelle, ou surchargée via ?date=AAAA-MM-JJ (pour tester l'affichage).
+    let now = new Date();
+    const override = new URLSearchParams(location.search).get("date");
+    if (override){ const d = new Date(override + "T12:00:00"); if (!isNaN(d.getTime())) now = d; }
+
     const enCours = (now.getFullYear()===MOIS_ANNEE && now.getMonth()===MOIS_INDEX);
-    // Jour réel si on est dans le mois chargé ; sinon 1er jour (aperçu).
-    let day = enCours ? now.getDate() : 1;
-    const rec = DATA[day] || DATA[1];
+
+    // Mois pas encore chargé (calendrier non mis à jour à temps) → écran d'attente.
+    // On n'affiche JAMAIS de faux horaires.
+    if (!enCours){
+      document.getElementById("maj-date").textContent =
+        `${JOURS[now.getDay()]} ${now.getDate()} ${MOIS[now.getMonth()]} ${now.getFullYear()}`;
+      document.getElementById("maj").hidden = false;
+      document.getElementById("contenu").hidden = true;
+      document.getElementById("periode").textContent = "";
+      return;
+    }
+    document.getElementById("maj").hidden = true;
+    document.getElementById("contenu").hidden = false;
+
+    const day = now.getDate();
+    const rec = DATA[day];
 
     // Date d'affichage
     const display = new Date(MOIS_ANNEE, MOIS_INDEX, day);
