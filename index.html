@@ -375,7 +375,7 @@
     // Date réelle, ou surchargée via ?date=AAAA-MM-JJ (pour tester l'affichage).
     let now = new Date();
     const override = new URLSearchParams(location.search).get("date");
-    if (override){ const d = new Date(override + "T12:00:00"); if (!isNaN(d.getTime())) now = d; }
+    if (override){ const s = override.includes("T") ? override : override + "T12:00:00"; const d = new Date(s); if (!isNaN(d.getTime())) now = d; }
 
     const enCours = (now.getFullYear()===MOIS_ANNEE && now.getMonth()===MOIS_INDEX);
 
