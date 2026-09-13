@@ -1,0 +1,408 @@
+<title>Mosquée de Villepinte — Horaires</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Marcellus&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --ground: #f4efe4;
+    --panel: #fbf8f1;
+    --panel-line: #e4dcc7;
+    --ink: #1c2b28;
+    --ink-soft: #5c6a63;
+    --ink-faint: #93a099;
+    --gold: #b28a3a;
+    --gold-deep: #8a6a26;
+    --green: #14504a;
+    --green-deep: #0d3934;
+    --next-bg: #14504a;
+    --next-ink: #f6efdd;
+    --past: #a9b2ab;
+    --shadow: 0 1px 2px rgba(28,43,40,.06), 0 12px 34px rgba(28,43,40,.09);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0c1c1a;
+      --panel: #112825;
+      --panel-line: #1e3d38;
+      --ink: #f0ead8;
+      --ink-soft: #a7b8b1;
+      --ink-faint: #6f827b;
+      --gold: #d8b262;
+      --gold-deep: #c69a45;
+      --green: #3f9c90;
+      --green-deep: #082220;
+      --next-bg: #d8b262;
+      --next-ink: #0c1c1a;
+      --past: #55655f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0c1c1a;
+    --panel: #112825;
+    --panel-line: #1e3d38;
+    --ink: #f0ead8;
+    --ink-soft: #a7b8b1;
+    --ink-faint: #6f827b;
+    --gold: #d8b262;
+    --gold-deep: #c69a45;
+    --green: #3f9c90;
+    --green-deep: #082220;
+    --next-bg: #d8b262;
+    --next-ink: #0c1c1a;
+    --past: #55655f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 22px 16px 40px;
+  }
+  .app { width: 100%; max-width: 440px; }
+
+  /* Header */
+  .top {
+    text-align: center;
+    padding: 8px 0 20px;
+  }
+  .crescent {
+    font-family: "Amiri", serif;
+    font-size: 30px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .mosque {
+    font-family: "Marcellus", serif;
+    font-size: 25px;
+    letter-spacing: .01em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .mosque span { color: var(--gold-deep); }
+  .arabic-name {
+    font-family: "Amiri", serif;
+    font-size: 20px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  /* Date panel */
+  .datecard {
+    background: var(--green);
+    color: var(--next-ink);
+    border-radius: 18px;
+    padding: 16px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  :root[data-theme="dark"] .datecard,
+  :root:not([data-theme="light"]) .datecard { color: #f0ead8; }
+  .greg {
+    font-family: "Marcellus", serif;
+    font-size: 20px;
+    letter-spacing: .02em;
+  }
+  .hijri {
+    font-family: "Amiri", serif;
+    font-size: 17px;
+    opacity: .82;
+    margin-top: 2px;
+  }
+  .next-strip {
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid rgba(255,255,255,.16);
+    font-size: 13px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    opacity: .9;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .next-strip b { color: var(--gold); font-weight: 600; }
+  .count { font-variant-numeric: tabular-nums; }
+
+  /* Prayer list */
+  .list {
+    margin-top: 16px;
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--panel-line);
+    transition: background .2s;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .name {
+    font-family: "Marcellus", serif;
+    font-size: 18px;
+    letter-spacing: .01em;
+  }
+  .row .ar {
+    font-family: "Amiri", serif;
+    font-size: 18px;
+    color: var(--ink-soft);
+    text-align: right;
+    min-width: 62px;
+  }
+  .row .t {
+    font-size: 23px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+    min-width: 74px;
+    text-align: right;
+  }
+  .row .name .morrow {
+    display: inline-block;
+    margin-left: 8px;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gold-deep);
+    border: 1px solid var(--panel-line);
+    border-radius: 20px;
+    padding: 1px 7px;
+    vertical-align: middle;
+  }
+  .row.next {
+    background: var(--next-bg);
+  }
+  .row.next .name .morrow { color: var(--gold); border-color: rgba(255,255,255,.25); }
+  .row.next .name, .row.next .t { color: var(--next-ink); }
+  .row.next .ar { color: var(--next-ink); opacity: .85; }
+  .row.next .name::after {
+    content: "En cours";
+    display: inline-block;
+    margin-left: 9px;
+    font-family: "Inter", sans-serif;
+    font-size: 10px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--gold);
+    color: var(--green-deep);
+    vertical-align: middle;
+  }
+
+  .jumua {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    background: transparent;
+    border: 1px dashed var(--gold);
+    color: var(--gold-deep);
+    border-radius: 14px;
+    padding: 11px;
+    font-size: 14px;
+    letter-spacing: .02em;
+  }
+  .jumua b { font-family: "Marcellus", serif; font-weight: 400; }
+  :root[data-theme="dark"] .jumua, :root:not([data-theme="light"]) .jumua { color: var(--gold); }
+
+  .foot {
+    text-align: center;
+    margin-top: 22px;
+    color: var(--ink-faint);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .foot .demo {
+    display: inline-block;
+    margin-bottom: 6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    color: var(--ink-soft);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 600;
+  }
+</style>
+
+<div class="app">
+  <div class="top">
+    <div class="crescent">☾</div>
+    <h1 class="mosque">Mosquée de <span>Villepinte</span></h1>
+    <div class="arabic-name">مسجد فيلبانت</div>
+  </div>
+
+  <div class="datecard">
+    <div class="greg" id="greg">—</div>
+    <div class="hijri" id="hijri">—</div>
+    <div class="next-strip">
+      <span id="nextlabel">—</span>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="jumua" id="jumua" hidden>
+    <span>🕌</span><span>Salât al-Jumu'a &nbsp;·&nbsp; <b>13:15</b></span>
+  </div>
+
+  <div class="foot">
+    <div class="demo">Démo · Septembre 2026</div><br>
+    Horaires officiels de la Mosquée de Villepinte.<br>
+    Dates hégiriennes sous réserve de confirmation par l'observation lunaire.
+  </div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  //  MISE À JOUR MENSUELLE — changer ces 2 lignes + le bloc DATA
+  const MOIS_ANNEE = 2026;   // année de l'affiche en cours
+  const MOIS_INDEX = 8;      // mois : 0=janvier … 8=septembre … 11=décembre
+  // ═══════════════════════════════════════════════════════════════
+
+  // Horaires officiels — Septembre 2026 (source: affiche de la mosquée)
+  // [Fajr, Chourouk, Dhuhr, Asr, Maghrib, Isha], hijri
+  const DATA = {
+    1:{t:["05:50","07:07","13:55","17:32","20:34","22:04"],h:"18 Rabī' al-awwal 1448"},
+    2:{t:["05:51","07:08","13:54","17:31","20:32","22:02"],h:"19 Rabī' al-awwal 1448"},
+    3:{t:["05:53","07:09","13:54","17:29","20:30","22:00"],h:"20 Rabī' al-awwal 1448"},
+    4:{t:["05:55","07:11","13:54","17:28","20:28","21:58"],h:"21 Rabī' al-awwal 1448"},
+    5:{t:["05:56","07:12","13:53","17:27","20:26","21:56"],h:"22 Rabī' al-awwal 1448"},
+    6:{t:["05:58","07:14","13:53","17:25","20:24","21:54"],h:"23 Rabī' al-awwal 1448"},
+    7:{t:["06:00","07:15","13:53","17:24","20:21","21:51"],h:"24 Rabī' al-awwal 1448"},
+    8:{t:["06:01","07:17","13:52","17:23","20:19","21:49"],h:"25 Rabī' al-awwal 1448"},
+    9:{t:["06:03","07:18","13:52","17:21","20:17","21:47"],h:"26 Rabī' al-awwal 1448"},
+    10:{t:["06:05","07:19","13:52","17:20","20:15","21:45"],h:"27 Rabī' al-awwal 1448"},
+    11:{t:["06:06","07:21","13:51","17:19","20:13","21:43"],h:"28 Rabī' al-awwal 1448"},
+    12:{t:["06:08","07:22","13:51","17:17","20:11","21:41"],h:"29 Rabī' al-awwal 1448"},
+    13:{t:["06:10","07:24","13:51","17:16","20:09","21:39"],h:"30 Rabī' al-awwal 1448"},
+    14:{t:["06:11","07:25","13:50","17:14","20:07","21:37"],h:"01 Rabī' ath-thānī 1448"},
+    15:{t:["06:13","07:26","13:50","17:13","20:04","21:34"],h:"02 Rabī' ath-thānī 1448"},
+    16:{t:["06:14","07:28","13:50","17:11","20:02","21:32"],h:"03 Rabī' ath-thānī 1448"},
+    17:{t:["06:16","07:29","13:49","17:10","20:00","21:30"],h:"04 Rabī' ath-thānī 1448"},
+    18:{t:["06:17","07:31","13:49","17:08","19:58","21:28"],h:"05 Rabī' ath-thānī 1448"},
+    19:{t:["06:19","07:32","13:48","17:07","19:56","21:26"],h:"06 Rabī' ath-thānī 1448"},
+    20:{t:["06:21","07:34","13:48","17:05","19:54","21:24"],h:"07 Rabī' ath-thānī 1448"},
+    21:{t:["06:22","07:35","13:48","17:04","19:52","21:22"],h:"08 Rabī' ath-thānī 1448"},
+    22:{t:["06:24","07:36","13:47","17:02","19:49","21:19"],h:"09 Rabī' ath-thānī 1448"},
+    23:{t:["06:25","07:38","13:47","17:01","19:47","21:17"],h:"10 Rabī' ath-thānī 1448"},
+    24:{t:["06:27","07:39","13:47","16:59","19:45","21:15"],h:"11 Rabī' ath-thānī 1448"},
+    25:{t:["06:28","07:41","13:46","16:58","19:43","21:13"],h:"12 Rabī' ath-thānī 1448"},
+    26:{t:["06:30","07:42","13:46","16:56","19:41","21:11"],h:"13 Rabī' ath-thānī 1448"},
+    27:{t:["06:31","07:44","13:46","16:55","19:39","21:09"],h:"14 Rabī' ath-thānī 1448"},
+    28:{t:["06:33","07:45","13:45","16:53","19:37","21:07"],h:"15 Rabī' ath-thānī 1448"},
+    29:{t:["06:34","07:47","13:45","16:52","19:35","21:05"],h:"16 Rabī' ath-thānī 1448"},
+    30:{t:["06:36","07:48","13:45","16:50","19:32","21:02"],h:"17 Rabī' ath-thānī 1448"}
+  };
+  const NAMES = [
+    ["Fajr","الفجر"],["Chourouk","الشروق"],["Dhohr","الظهر"],
+    ["Asr","العصر"],["Maghrib","المغرب"],["Isha","العشاء"]
+  ];
+  const JOURS = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+  const MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+
+  function toMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
+
+  function render(){
+    const now = new Date();
+    const enCours = (now.getFullYear()===MOIS_ANNEE && now.getMonth()===MOIS_INDEX);
+    // Jour réel si on est dans le mois chargé ; sinon 1er jour (aperçu).
+    let day = enCours ? now.getDate() : 1;
+    const rec = DATA[day] || DATA[1];
+
+    // Date d'affichage
+    const display = new Date(MOIS_ANNEE, MOIS_INDEX, day);
+    document.getElementById("greg").textContent =
+      `${JOURS[display.getDay()]} ${day} ${MOIS[MOIS_INDEX]} ${MOIS_ANNEE}`;
+    document.getElementById("hijri").textContent = rec.h + " هـ";
+
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const demain = DATA[day+1] || rec;   // horaires du lendemain (à défaut : le jour même)
+
+    // Indices des vraies prières (Chourouk = lever du soleil, pas une prière).
+    const salahIdx = [0,2,3,4,5];
+
+    const M = rec.t.map(toMin);
+
+    // Prochaine prière (pour le bandeau du haut).
+    let nextIdx = -1;
+    for (const i of salahIdx){ if (M[i] > nowMin){ nextIdx = i; break; } }
+
+    // Prière ACTUELLEMENT en cours (sa fenêtre) — sinon -1.
+    // Entre Chourouk et Dhohr (aucune prière) : rien n'est surligné.
+    let activeIdx = -1;
+    if      (nowMin >= M[0] && nowMin < M[1]) activeIdx = 0;  // Fajr  → Chourouk
+    else if (nowMin >= M[2] && nowMin < M[3]) activeIdx = 2;  // Dhohr → Asr
+    else if (nowMin >= M[3] && nowMin < M[4]) activeIdx = 3;  // Asr   → Maghrib
+    else if (nowMin >= M[4] && nowMin < M[5]) activeIdx = 4;  // Maghrib → Isha
+    else if (nowMin >= M[5])                  activeIdx = 5;  // Isha  → fin de nuit
+
+    // Une ligne bascule au lendemain quand la PROCHAINE PRIÈRE est arrivée.
+    // Entre Chourouk et Dhohr il n'y a pas de prière : Fajr et Chourouk
+    // restent affichés jusqu'à Dhohr.
+    const prochaineSalat = (i) => { for (const j of salahIdx){ if (j > i) return j; } return -1; };
+    const roleLendemain = (i) => {
+      const j = prochaineSalat(i);
+      return j !== -1 && nowMin >= toMin(rec.t[j]);
+    };
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+    rec.t.forEach((time,i)=>{
+      const roule = roleLendemain(i);            // prochaine prière arrivée → lendemain
+      const heure = roule ? demain.t[i] : time;
+      const row = document.createElement("div");
+      row.className = "row" + (i === activeIdx ? " next" : "");
+      row.innerHTML =
+        `<div class="name">${NAMES[i][0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
+        `<div class="t">${heure}</div>`+
+        `<div class="ar">${NAMES[i][1]}</div>`;
+      list.appendChild(row);
+    });
+
+    // Bandeau prochaine prière + compte à rebours
+    const nl = document.getElementById("nextlabel");
+    const ct = document.getElementById("count");
+    if (nextIdx >= 0){
+      const diff = toMin(rec.t[nextIdx]) - nowMin;
+      const h = Math.floor(diff/60), m = diff%60;
+      nl.innerHTML = `Prochaine prière · <b>${NAMES[nextIdx][0]}</b> ${rec.t[nextIdx]}`;
+      ct.textContent = h>0 ? `dans ${h}h${String(m).padStart(2,"0")}` : `dans ${m} min`;
+    } else {
+      // Toutes les prières du jour sont passées → Fajr du lendemain
+      const fajrDemain = demain.t[0];
+      const diff = (1440 - nowMin) + toMin(fajrDemain);  // franchit minuit
+      const h = Math.floor(diff/60), m = diff%60;
+      nl.innerHTML = `Prochaine prière · <b>Fajr</b> ${fajrDemain} <span style="opacity:.65">(demain)</span>`;
+      ct.textContent = h>0 ? `dans ${h}h${String(m).padStart(2,"0")}` : `dans ${m} min`;
+    }
+
+    // Jumu'a le vendredi
+    document.getElementById("jumua").hidden = (display.getDay() !== 5);
+  }
+
+  render();
+  setInterval(render, 30000);
+</script>
