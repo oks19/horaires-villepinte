@@ -274,7 +274,7 @@
   </div>
 
   <div class="foot">
-    <div class="demo">Démo · Septembre 2026</div><br>
+    <div class="demo" id="periode">—</div><br>
     Horaires officiels de la Mosquée de Villepinte.<br>
     Dates hégiriennes sous réserve de confirmation par l'observation lunaire.
   </div>
@@ -342,6 +342,8 @@
     document.getElementById("greg").textContent =
       `${JOURS[display.getDay()]} ${day} ${MOIS[MOIS_INDEX]} ${MOIS_ANNEE}`;
     document.getElementById("hijri").textContent = rec.h + " هـ";
+    const moisNom = MOIS[MOIS_INDEX].charAt(0).toUpperCase() + MOIS[MOIS_INDEX].slice(1);
+    document.getElementById("periode").textContent = `${moisNom} ${MOIS_ANNEE}`;
 
     const nowMin = now.getHours()*60 + now.getMinutes();
     const demain = DATA[day+1] || rec;   // horaires du lendemain (à défaut : le jour même)
