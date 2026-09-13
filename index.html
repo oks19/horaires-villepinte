@@ -316,52 +316,73 @@
 
   <div class="foot">
     <div class="demo" id="periode">—</div><br>
-    Horaires officiels de la Mosquée de Villepinte.<br>
+    Horaires calculés selon la méthode de la Mosquée de Villepinte.<br>
     Dates hégiriennes sous réserve de confirmation par l'observation lunaire.
   </div>
 </div>
 
 <script>
   // ═══════════════════════════════════════════════════════════════
-  //  MISE À JOUR MENSUELLE — changer ces 2 lignes + le bloc DATA
-  const MOIS_ANNEE = 2026;   // année de l'affiche en cours
-  const MOIS_INDEX = 8;      // mois : 0=janvier … 8=septembre … 11=décembre
+  //  CALCUL AUTOMATIQUE — méthode déduite des affiches de la Mosquée.
+  //  Pour ajuster un mois : modifier CFG.off (décalages) ou CFG.isha[mois].
   // ═══════════════════════════════════════════════════════════════
-
-  // Horaires officiels — Septembre 2026 (source: affiche de la mosquée)
-  // [Fajr, Chourouk, Dhuhr, Asr, Maghrib, Isha], hijri
-  const DATA = {
-    1:{t:["05:50","07:07","13:55","17:32","20:34","22:04"],h:"18 Rabī' al-awwal 1448"},
-    2:{t:["05:51","07:08","13:54","17:31","20:32","22:02"],h:"19 Rabī' al-awwal 1448"},
-    3:{t:["05:53","07:09","13:54","17:29","20:30","22:00"],h:"20 Rabī' al-awwal 1448"},
-    4:{t:["05:55","07:11","13:54","17:28","20:28","21:58"],h:"21 Rabī' al-awwal 1448"},
-    5:{t:["05:56","07:12","13:53","17:27","20:26","21:56"],h:"22 Rabī' al-awwal 1448"},
-    6:{t:["05:58","07:14","13:53","17:25","20:24","21:54"],h:"23 Rabī' al-awwal 1448"},
-    7:{t:["06:00","07:15","13:53","17:24","20:21","21:51"],h:"24 Rabī' al-awwal 1448"},
-    8:{t:["06:01","07:17","13:52","17:23","20:19","21:49"],h:"25 Rabī' al-awwal 1448"},
-    9:{t:["06:03","07:18","13:52","17:21","20:17","21:47"],h:"26 Rabī' al-awwal 1448"},
-    10:{t:["06:05","07:19","13:52","17:20","20:15","21:45"],h:"27 Rabī' al-awwal 1448"},
-    11:{t:["06:06","07:21","13:51","17:19","20:13","21:43"],h:"28 Rabī' al-awwal 1448"},
-    12:{t:["06:08","07:22","13:51","17:17","20:11","21:41"],h:"29 Rabī' al-awwal 1448"},
-    13:{t:["06:10","07:24","13:51","17:16","20:09","21:39"],h:"30 Rabī' al-awwal 1448"},
-    14:{t:["06:11","07:25","13:50","17:14","20:07","21:37"],h:"01 Rabī' ath-thānī 1448"},
-    15:{t:["06:13","07:26","13:50","17:13","20:04","21:34"],h:"02 Rabī' ath-thānī 1448"},
-    16:{t:["06:14","07:28","13:50","17:11","20:02","21:32"],h:"03 Rabī' ath-thānī 1448"},
-    17:{t:["06:16","07:29","13:49","17:10","20:00","21:30"],h:"04 Rabī' ath-thānī 1448"},
-    18:{t:["06:17","07:31","13:49","17:08","19:58","21:28"],h:"05 Rabī' ath-thānī 1448"},
-    19:{t:["06:19","07:32","13:48","17:07","19:56","21:26"],h:"06 Rabī' ath-thānī 1448"},
-    20:{t:["06:21","07:34","13:48","17:05","19:54","21:24"],h:"07 Rabī' ath-thānī 1448"},
-    21:{t:["06:22","07:35","13:48","17:04","19:52","21:22"],h:"08 Rabī' ath-thānī 1448"},
-    22:{t:["06:24","07:36","13:47","17:02","19:49","21:19"],h:"09 Rabī' ath-thānī 1448"},
-    23:{t:["06:25","07:38","13:47","17:01","19:47","21:17"],h:"10 Rabī' ath-thānī 1448"},
-    24:{t:["06:27","07:39","13:47","16:59","19:45","21:15"],h:"11 Rabī' ath-thānī 1448"},
-    25:{t:["06:28","07:41","13:46","16:58","19:43","21:13"],h:"12 Rabī' ath-thānī 1448"},
-    26:{t:["06:30","07:42","13:46","16:56","19:41","21:11"],h:"13 Rabī' ath-thānī 1448"},
-    27:{t:["06:31","07:44","13:46","16:55","19:39","21:09"],h:"14 Rabī' ath-thānī 1448"},
-    28:{t:["06:33","07:45","13:45","16:53","19:37","21:07"],h:"15 Rabī' ath-thānī 1448"},
-    29:{t:["06:34","07:47","13:45","16:52","19:35","21:05"],h:"16 Rabī' ath-thānī 1448"},
-    30:{t:["06:36","07:48","13:45","16:50","19:32","21:02"],h:"17 Rabī' ath-thānī 1448"}
+  const LAT = 48.9626, LNG = 2.5413, ELV = 59;   // Villepinte
+  const CFG = {
+    fajrAngle: 11.25,
+    off: { fajr:-10, chourouk:2, dohr:5, asr:0, maghrib:1 },   // décalages (min)
+    // Régime Isha par mois (1=janv … 12=déc) — type: 'angle' | 'gap' | 'fixe'
+    isha: {
+      1:{type:'fixe',  v:'18:40'},     2:{type:'fixe',  v:'18:40'},
+      3:{type:'gap',   v:90},          4:{type:'gap',   v:90},
+      5:{type:'angle', v:12, off:3},   6:{type:'angle', v:12, off:3},
+      7:{type:'angle', v:12, off:3},   8:{type:'angle', v:12, off:3},
+      9:{type:'gap',   v:90},         10:{type:'gap',   v:90},
+     11:{type:'gap',   v:90},         12:{type:'fixe',  v:'18:40'}
+    },
+    confirmes: [8, 9, 11, 12]   // mois vérifiés sur affiche officielle
   };
+  const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
+
+  // ---- Astronomie (algorithme PrayTimes) ----
+  const D2R=Math.PI/180, R2D=180/Math.PI;
+  const _sin=d=>Math.sin(d*D2R), _cos=d=>Math.cos(d*D2R), _tan=d=>Math.tan(d*D2R);
+  const _asin=x=>R2D*Math.asin(x), _acos=x=>R2D*Math.acos(x);
+  const _atan2=(y,x)=>R2D*Math.atan2(y,x), _acot=x=>R2D*Math.atan(1/x);
+  const fixA=a=>{a=a%360;return a<0?a+360:a;};
+  const fixH=h=>{h=h%24;return h<0?h+24:h;};
+  let _jD;
+  function _julian(y,m,d){ if(m<=2){y-=1;m+=12;} const A=Math.floor(y/100), B=2-A+Math.floor(A/4); return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5; }
+  function _sun(jd){ const D=jd-2451545, g=fixA(357.529+0.98560028*D), q=fixA(280.459+0.98564736*D), L=fixA(q+1.915*_sin(g)+0.020*_sin(2*g)), e=23.439-0.00000036*D; return { decl:_asin(_sin(e)*_sin(L)), eqt:q/15-fixH(_atan2(_cos(e)*_sin(L),_cos(L))/15) }; }
+  const _noon=t=>fixH(12-_sun(_jD+t/24).eqt);
+  function _angT(a,t,dir){ const dec=_sun(_jD+t/24).decl, noon=_noon(t); let x=(-_sin(a)-_sin(dec)*_sin(LAT))/(_cos(dec)*_cos(LAT)); x=Math.max(-1,Math.min(1,x)); const dt=1/15*_acos(x); return noon+(dir==='ccw'?-dt:dt); }
+  function _asrT(f,t){ const dec=_sun(_jD+t/24).decl; return _angT(-_acot(f+_tan(Math.abs(LAT-dec))),t); }
+  const _rs=()=>0.833+0.0347*Math.sqrt(Math.abs(ELV));
+  const _fmt=h=>{ h=fixH(h+0.5/60); return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.floor((h-Math.floor(h))*60)).padStart(2,'0'); };
+  const _mm=v=>{ v=((v%1440)+1440)%1440; return String(Math.floor(v/60)).padStart(2,'0')+':'+String(v%60).padStart(2,'0'); };
+
+  // fuseau France : heure d'été (+2) du dernier dim. de mars au dernier dim. d'octobre, sinon +1
+  function _lastSun(y,mon){ const d=new Date(Date.UTC(y,mon+1,0)); return d.getUTCDate()-d.getUTCDay(); }
+  function _parisTZ(dt){ const y=dt.getFullYear(), a=new Date(y,2,_lastSun(y,2)), b=new Date(y,9,_lastSun(y,9)); return (dt>=a && dt<b)?2:1; }
+
+  // date hégirienne (Umm al-Qura) — informative, sous réserve d'observation lunaire
+  function _hijri(dt){ try{ const p=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'}).formatToParts(dt); const g=k=>+p.find(x=>x.type===k).value; return `${String(g('day')).padStart(2,'0')} ${HMOIS[g('month')-1]} ${g('year')}`; }catch(e){ return ""; } }
+
+  // ---- Horaires calculés d'un jour (dt = objet Date) ----
+  function computeAll(dt){
+    const mon=dt.getMonth()+1, tz=_parisTZ(dt), o=CFG.off;
+    _jD=_julian(dt.getFullYear(),mon,dt.getDate())-LNG/(15*24);
+    let t={fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18};
+    for(let i=0;i<3;i++) t={ fajr:_angT(CFG.fajrAngle,t.fajr,'ccw'), sunrise:_angT(_rs(),t.sunrise,'ccw'), dhuhr:_noon(t.dhuhr), asr:_asrT(1,t.asr), sunset:_angT(_rs(),t.sunset) };
+    const adj=v=>v+tz-LNG/15;
+    const F=_fmt(adj(t.fajr)+o.fajr/60), C=_fmt(adj(t.sunrise)+o.chourouk/60), Do=_fmt(adj(t.dhuhr)+o.dohr/60), A=_fmt(adj(t.asr)+o.asr/60), Mg=_fmt(adj(t.sunset)+o.maghrib/60);
+    const ir=CFG.isha[mon]; let I;
+    if(ir.type==='gap'){ I=_mm(toMin(Mg)+ir.v); }
+    else if(ir.type==='fixe'){ I=ir.v; }
+    else { let ti=18; for(let i=0;i<3;i++) ti=_angT(ir.v,ti,'cw'); I=_fmt(adj(ti)+(ir.off||0)/60); }
+    return { t:[F,C,Do,A,Mg,I], h:_hijri(dt), confirme: CFG.confirmes.includes(mon) };
+  }
+
+  // (bloc de données mensuel supprimé — les horaires sont désormais calculés)
   const NAMES = [
     ["Fajr","الفجر"],["Chourouk","الشروق"],["Dhohr","الظهر"],
     ["Asr","العصر"],["Maghrib","المغرب"],["Isha","العشاء"]
@@ -372,42 +393,26 @@
   function toMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
 
   function render(){
-    // Date réelle, ou surchargée via ?date=AAAA-MM-JJ (pour tester l'affichage).
+    // Date réelle, ou surchargée via ?date=AAAA-MM-JJ[THH:MM] (pour tester).
     let now = new Date();
     const override = new URLSearchParams(location.search).get("date");
     if (override){ const s = override.includes("T") ? override : override + "T12:00:00"; const d = new Date(s); if (!isNaN(d.getTime())) now = d; }
+    const nowMin = now.getHours()*60 + now.getMinutes();
 
-    const enCours = (now.getFullYear()===MOIS_ANNEE && now.getMonth()===MOIS_INDEX);
-
-    // Mois pas encore chargé (calendrier non mis à jour à temps) → écran d'attente.
-    // On n'affiche JAMAIS de faux horaires.
-    if (!enCours){
-      document.getElementById("maj-date").textContent =
-        `${JOURS[now.getDay()]} ${now.getDate()} ${MOIS[now.getMonth()]} ${now.getFullYear()}`;
-      document.getElementById("maj").hidden = false;
-      document.getElementById("contenu").hidden = true;
-      document.getElementById("periode").textContent = "";
-      return;
-    }
     document.getElementById("maj").hidden = true;
     document.getElementById("contenu").hidden = false;
 
-    const day = now.getDate();
-    const rec = DATA[day];
+    // Horaires CALCULÉS du jour et du lendemain
+    const rec = computeAll(now);
+    const demain = computeAll(new Date(now.getFullYear(), now.getMonth(), now.getDate()+1));
 
-    // Date d'affichage
-    const display = new Date(MOIS_ANNEE, MOIS_INDEX, day);
     document.getElementById("greg").textContent =
-      `${JOURS[display.getDay()]} ${day} ${MOIS[MOIS_INDEX]} ${MOIS_ANNEE}`;
-    const moisNom = MOIS[MOIS_INDEX].charAt(0).toUpperCase() + MOIS[MOIS_INDEX].slice(1);
-    document.getElementById("periode").textContent = `${moisNom} ${MOIS_ANNEE}`;
+      `${JOURS[now.getDay()]} ${now.getDate()} ${MOIS[now.getMonth()]} ${now.getFullYear()}`;
+    const moisNom = MOIS[now.getMonth()].charAt(0).toUpperCase() + MOIS[now.getMonth()].slice(1);
+    document.getElementById("periode").textContent =
+      `${moisNom} ${now.getFullYear()}` + (rec.confirme ? "" : " · à confirmer");
 
-    const nowMin = now.getHours()*60 + now.getMinutes();
-    const demain = DATA[day+1] || rec;   // horaires du lendemain (à défaut : le jour même)
-
-    // Indices des vraies prières (Chourouk = lever du soleil, pas une prière).
     const salahIdx = [0,2,3,4,5];
-
     const M = rec.t.map(toMin);
 
     // Le jour hégirien commence au Maghrib : dès le Maghrib, la date hijri
@@ -469,7 +474,7 @@
     }
 
     // Jumu'a le vendredi
-    document.getElementById("jumua").hidden = (display.getDay() !== 5);
+    document.getElementById("jumua").hidden = (now.getDay() !== 5);
   }
 
   render();
