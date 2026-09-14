@@ -316,7 +316,7 @@
 
   <div class="foot">
     <div class="demo" id="periode">—</div><br>
-    Horaires calculés selon la méthode de la Mosquée de Villepinte.<br>
+    <span id="src">Horaires de la Mosquée de Villepinte.</span><br>
     Dates hégiriennes sous réserve de confirmation par l'observation lunaire.
   </div>
 </div>
@@ -342,6 +342,29 @@
     confirmes: [8, 9, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
+
+  // ---- Affiches OFFICIELLES exactes (clé "année-mois") ----
+  // Priorité sur le calcul. Ajouter ici chaque mois reçu → 100 % conforme à l'affiche.
+  // [Fajr, Chourouk, Dhohr, Asr, Maghrib, Isha]
+  const EXACT = {
+    "2026-9": {
+      1:["05:50","07:07","13:55","17:32","20:34","22:04"], 2:["05:51","07:08","13:54","17:31","20:32","22:02"],
+      3:["05:53","07:09","13:54","17:29","20:30","22:00"], 4:["05:55","07:11","13:54","17:28","20:28","21:58"],
+      5:["05:56","07:12","13:53","17:27","20:26","21:56"], 6:["05:58","07:14","13:53","17:25","20:24","21:54"],
+      7:["06:00","07:15","13:53","17:24","20:21","21:51"], 8:["06:01","07:17","13:52","17:23","20:19","21:49"],
+      9:["06:03","07:18","13:52","17:21","20:17","21:47"], 10:["06:05","07:19","13:52","17:20","20:15","21:45"],
+      11:["06:06","07:21","13:51","17:19","20:13","21:43"], 12:["06:08","07:22","13:51","17:17","20:11","21:41"],
+      13:["06:10","07:24","13:51","17:16","20:09","21:39"], 14:["06:11","07:25","13:50","17:14","20:07","21:37"],
+      15:["06:13","07:26","13:50","17:13","20:04","21:34"], 16:["06:14","07:28","13:50","17:11","20:02","21:32"],
+      17:["06:16","07:29","13:49","17:10","20:00","21:30"], 18:["06:17","07:31","13:49","17:08","19:58","21:28"],
+      19:["06:19","07:32","13:48","17:07","19:56","21:26"], 20:["06:21","07:34","13:48","17:05","19:54","21:24"],
+      21:["06:22","07:35","13:48","17:04","19:52","21:22"], 22:["06:24","07:36","13:47","17:02","19:49","21:19"],
+      23:["06:25","07:38","13:47","17:01","19:47","21:17"], 24:["06:27","07:39","13:47","16:59","19:45","21:15"],
+      25:["06:28","07:41","13:46","16:58","19:43","21:13"], 26:["06:30","07:42","13:46","16:56","19:41","21:11"],
+      27:["06:31","07:44","13:46","16:55","19:39","21:09"], 28:["06:33","07:45","13:45","16:53","19:37","21:07"],
+      29:["06:34","07:47","13:45","16:52","19:35","21:05"], 30:["06:36","07:48","13:45","16:50","19:32","21:02"]
+    }
+  };
 
   // ---- Astronomie (algorithme PrayTimes) ----
   const D2R=Math.PI/180, R2D=180/Math.PI;
@@ -369,7 +392,12 @@
 
   // ---- Horaires calculés d'un jour (dt = objet Date) ----
   function computeAll(dt){
-    const mon=dt.getMonth()+1, tz=_parisTZ(dt), o=CFG.off;
+    const mon=dt.getMonth()+1;
+    // 1) Si l'affiche officielle exacte existe pour ce jour → on l'utilise telle quelle
+    const ex = EXACT[`${dt.getFullYear()}-${mon}`];
+    if (ex && ex[dt.getDate()]) return { t: ex[dt.getDate()].slice(), h:_hijri(dt), confirme:true, source:'affiche' };
+    // 2) Sinon → calcul astronomique
+    const tz=_parisTZ(dt), o=CFG.off;
     _jD=_julian(dt.getFullYear(),mon,dt.getDate())-LNG/(15*24);
     let t={fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18};
     for(let i=0;i<3;i++) t={ fajr:_angT(CFG.fajrAngle,t.fajr,'ccw'), sunrise:_angT(_rs(),t.sunrise,'ccw'), dhuhr:_noon(t.dhuhr), asr:_asrT(1,t.asr), sunset:_angT(_rs(),t.sunset) };
@@ -379,7 +407,7 @@
     if(ir.type==='gap'){ I=_mm(toMin(Mg)+ir.v); }
     else if(ir.type==='fixe'){ I=ir.v; }
     else { let ti=18; for(let i=0;i<3;i++) ti=_angT(ir.v,ti,'cw'); I=_fmt(adj(ti)+(ir.off||0)/60); }
-    return { t:[F,C,Do,A,Mg,I], h:_hijri(dt), confirme: CFG.confirmes.includes(mon) };
+    return { t:[F,C,Do,A,Mg,I], h:_hijri(dt), confirme: CFG.confirmes.includes(mon), source:'calcul' };
   }
 
   // (bloc de données mensuel supprimé — les horaires sont désormais calculés)
@@ -411,6 +439,9 @@
     const moisNom = MOIS[now.getMonth()].charAt(0).toUpperCase() + MOIS[now.getMonth()].slice(1);
     document.getElementById("periode").textContent =
       `${moisNom} ${now.getFullYear()}` + (rec.confirme ? "" : " · à confirmer");
+    document.getElementById("src").textContent = (rec.source === 'affiche')
+      ? "Horaires officiels de la Mosquée de Villepinte."
+      : "Horaires calculés selon la méthode de la Mosquée de Villepinte.";
 
     const salahIdx = [0,2,3,4,5];
     const M = rec.t.map(toMin);
