@@ -469,6 +469,9 @@
     // restent affichés jusqu'à Dhohr.
     const prochaineSalat = (i) => { for (const j of salahIdx){ if (j > i) return j; } return -1; };
     const roleLendemain = (i) => {
+      // Fajr et Chourouk : basculent au lendemain 15 min après le lever du soleil
+      // (sinon ils resteraient affichés jusqu'au Dhohr, plusieurs heures après).
+      if (i === 0 || i === 1) return nowMin >= M[1] + 15;
       const j = prochaineSalat(i);
       return j !== -1 && nowMin >= toMin(rec.t[j]);
     };
