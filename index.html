@@ -185,6 +185,23 @@
     text-align: left;
     opacity: .7;
   }
+  .row .t .cd {
+    display: inline-block;
+    width: 3.6em;             /* place réservée sur toutes les lignes : heures alignées */
+    margin-right: 4px;
+    font-size: .5em;          /* même taille que les +x */
+    font-weight: 700;
+    text-align: right;
+    color: var(--gold-deep);
+    vertical-align: middle;
+  }
+  .row .t .cd b {
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--gold) 16%, transparent);
+  }
+  .row.next .t .cd { color: var(--gold); }
   .row .name .morrow {
     display: inline-block;
     margin-left: 8px;
@@ -303,7 +320,6 @@
     <div class="hijri" id="hijri">—</div>
     <div class="next-strip">
       <span id="nextlabel">—</span>
-      <span class="count" id="count"></span>
     </div>
   </div>
 
@@ -494,6 +510,12 @@
       return j !== -1 && nowMin >= toMin(rec.t[j]);
     };
 
+    // Prochain moment à venir (Chourouk compris) → compte à rebours sur sa ligne
+    let evIdx = rec.t.findIndex(x => toMin(x) > nowMin), evDiff;
+    if (evIdx >= 0) evDiff = M[evIdx] - nowMin;
+    else { evIdx = 0; evDiff = (1440 - nowMin) + toMin(demain.t[0]); }   // Fajr de demain
+    const rebours = "-" + Math.floor(evDiff/60) + ":" + String(evDiff%60).padStart(2,"0");
+
     const list = document.getElementById("list");
     list.innerHTML = "";
     rec.t.forEach((time,i)=>{
@@ -503,26 +525,17 @@
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
         `<div class="name">${NAMES[i][0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
-        `<div class="t">${heure}<span class="iq">${CFG.iqama[i]!=null ? "+"+CFG.iqama[i] : ""}</span></div>`+
+        `<div class="t"><span class="cd">${i===evIdx ? "<b>"+rebours+"</b>" : ""}</span>${heure}<span class="iq">${CFG.iqama[i]!=null ? "+"+CFG.iqama[i] : ""}</span></div>`+
         `<div class="ar">${NAMES[i][1]}</div>`;
       list.appendChild(row);
     });
 
-    // Bandeau prochaine prière + compte à rebours
+    // Bandeau : prochaine prière (le compte à rebours est sur la ligne)
     const nl = document.getElementById("nextlabel");
-    const ct = document.getElementById("count");
     if (nextIdx >= 0){
-      const diff = toMin(rec.t[nextIdx]) - nowMin;
-      const h = Math.floor(diff/60), m = diff%60;
       nl.innerHTML = `Prochaine prière · <b>${NAMES[nextIdx][0]}</b> ${rec.t[nextIdx]}`;
-      ct.textContent = h>0 ? `dans ${h}h${String(m).padStart(2,"0")}` : `dans ${m} min`;
     } else {
-      // Toutes les prières du jour sont passées → Fajr du lendemain
-      const fajrDemain = demain.t[0];
-      const diff = (1440 - nowMin) + toMin(fajrDemain);  // franchit minuit
-      const h = Math.floor(diff/60), m = diff%60;
-      nl.innerHTML = `Prochaine prière · <b>Fajr</b> ${fajrDemain} <span style="opacity:.65">(demain)</span>`;
-      ct.textContent = h>0 ? `dans ${h}h${String(m).padStart(2,"0")}` : `dans ${m} min`;
+      nl.innerHTML = `Prochaine prière · <b>Fajr</b> ${demain.t[0]} <span style="opacity:.65">(demain)</span>`;
     }
 
     // Jumu'a le vendredi
