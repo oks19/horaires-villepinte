@@ -121,21 +121,6 @@
     opacity: .82;
     margin-top: 2px;
   }
-  .next-strip {
-    margin-top: 9px;
-    padding-top: 9px;
-    border-top: 1px solid rgba(255,255,255,.16);
-    font-size: 13px;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    opacity: .9;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    align-items: baseline;
-  }
-  .next-strip b { color: var(--gold); font-weight: 600; }
-  .count { font-variant-numeric: tabular-nums; }
 
   /* Prayer list */
   .list {
@@ -318,9 +303,6 @@
   <div class="datecard">
     <div class="greg" id="greg">—</div>
     <div class="hijri" id="hijri">—</div>
-    <div class="next-strip">
-      <span id="nextlabel">—</span>
-    </div>
   </div>
 
   <div class="list" id="list"></div>
@@ -485,9 +467,6 @@
     const hijriRec = (nowMin >= M[4]) ? demain : rec;
     document.getElementById("hijri").textContent = hijriRec.h + " هـ";
 
-    // Prochaine prière (pour le bandeau du haut).
-    let nextIdx = -1;
-    for (const i of salahIdx){ if (M[i] > nowMin){ nextIdx = i; break; } }
 
     // Prière ACTUELLEMENT en cours (sa fenêtre) — sinon -1.
     // Entre Chourouk et Dhohr (aucune prière) : rien n'est surligné.
@@ -529,14 +508,6 @@
         `<div class="ar">${NAMES[i][1]}</div>`;
       list.appendChild(row);
     });
-
-    // Bandeau : prochaine prière (le compte à rebours est sur la ligne)
-    const nl = document.getElementById("nextlabel");
-    if (nextIdx >= 0){
-      nl.innerHTML = `Prochaine prière · <b>${NAMES[nextIdx][0]}</b> ${rec.t[nextIdx]}`;
-    } else {
-      nl.innerHTML = `Prochaine prière · <b>Fajr</b> ${demain.t[0]} <span style="opacity:.65">(demain)</span>`;
-    }
 
     // Jumu'a le vendredi
     document.getElementById("jumua").hidden = (now.getDay() !== 5);
