@@ -1,5 +1,5 @@
 <title>Mosquée de Villepinte — Horaires</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,8 +67,8 @@
     min-height: 100dvh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+    align-items: flex-start;   /* en haut : jamais sous la barre d adresse (Chrome Android) */
+    padding: calc(20px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom));
   }
   .app { width: 100%; max-width: 440px; }
 
