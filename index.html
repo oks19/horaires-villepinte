@@ -176,6 +176,15 @@
     min-width: 74px;
     text-align: right;
   }
+  .row .t .iq {
+    display: inline-block;
+    width: 2.2em;
+    margin-left: 3px;
+    font-size: .5em;           /* moitié de la taille de l heure */
+    font-weight: 600;
+    text-align: left;
+    opacity: .7;
+  }
   .row .name .morrow {
     display: inline-block;
     margin-left: 8px;
@@ -339,6 +348,10 @@
       9:{type:'gap',   v:90},         10:{type:'gap',   v:90},
      11:{type:'gap',   v:90},         12:{type:'fixe',  v:'18:40'}
     },
+    // Délai avant l iqama (min), affiché à droite de l heure — null = pas affiché (Chourouk)
+    iqama: [10, null, 10, 10, 5, 10],
+    // Heure d été : Dhohr bloqué à cette heure
+    dhohrEte: "14:00",
     confirmes: [8, 9, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -392,6 +405,11 @@
 
   // ---- Horaires calculés d'un jour (dt = objet Date) ----
   function computeAll(dt){
+    const r=_computeRaw(dt);
+    if (_parisTZ(dt)===2) r.t[2]=CFG.dhohrEte;   // heure d été : Dhohr fixe
+    return r;
+  }
+  function _computeRaw(dt){
     const mon=dt.getMonth()+1;
     // 1) Si l'affiche officielle exacte existe pour ce jour → on l'utilise telle quelle
     const ex = EXACT[`${dt.getFullYear()}-${mon}`];
@@ -485,7 +503,7 @@
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
         `<div class="name">${NAMES[i][0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
-        `<div class="t">${heure}</div>`+
+        `<div class="t">${heure}<span class="iq">${CFG.iqama[i]!=null ? "+"+CFG.iqama[i] : ""}</span></div>`+
         `<div class="ar">${NAMES[i][1]}</div>`;
       list.appendChild(row);
     });
