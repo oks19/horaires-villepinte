@@ -19,6 +19,7 @@
     --next-bg: #14504a;
     --next-ink: #f6efdd;
     --past: #a9b2ab;
+    --count: #16895a;
     --shadow: 0 1px 2px rgba(28,43,40,.06), 0 12px 34px rgba(28,43,40,.09);
   }
   @media (prefers-color-scheme: dark) {
@@ -36,6 +37,7 @@
       --next-bg: #d8b262;
       --next-ink: #0c1c1a;
       --past: #55655f;
+      --count: #4fcf90;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.4);
     }
   }
@@ -53,6 +55,7 @@
     --next-bg: #d8b262;
     --next-ink: #0c1c1a;
     --past: #55655f;
+    --count: #4fcf90;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.4);
   }
   * { box-sizing: border-box; }
@@ -133,7 +136,7 @@
   }
   .row {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: minmax(0,1fr) auto auto;
     align-items: center;
     gap: 14px;
     padding: 12px 18px;
@@ -141,6 +144,10 @@
     transition: background .2s;
   }
   .row:last-child { border-bottom: none; }
+  @media (max-width: 390px) {          /* petits téléphones Android */
+    .row { gap: 10px; padding: 12px 14px; }
+    .row .name { font-size: 16px; }
+  }
   .row .name {
     font-family: "Marcellus", serif;
     font-size: 18px;
@@ -172,21 +179,21 @@
   }
   .row .t .cd {
     display: inline-block;
-    width: 3.6em;             /* place réservée sur toutes les lignes : heures alignées */
+    width: 3.3em;             /* place réservée sur toutes les lignes : heures alignées */
     margin-right: 4px;
     font-size: .5em;          /* même taille que les +x */
     font-weight: 700;
     text-align: right;
-    color: var(--gold-deep);
+    color: var(--count);
     vertical-align: middle;
   }
   .row .t .cd b {
     font-weight: 700;
     padding: 1px 5px;
     border-radius: 20px;
-    background: color-mix(in srgb, var(--gold) 16%, transparent);
+    background: color-mix(in srgb, var(--count) 15%, transparent);
   }
-  .row.next .t .cd { color: var(--gold); }
+  .row.next .t .cd { color: #7ee2ae; }
   .row .name .morrow {
     display: inline-block;
     margin-left: 8px;
