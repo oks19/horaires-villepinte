@@ -466,7 +466,7 @@
       `${moisNom} ${now.getFullYear()}` + (rec.confirme ? "" : " · à confirmer");
     document.getElementById("src").textContent = (rec.source === 'affiche')
       ? "Horaires officiels de la Mosquée de Villepinte."
-      : "Horaires calculés selon la méthode de la Mosquée de Villepinte.";
+      : "Horaires calculés selon la méthode de la Mosquée de Villepinte (écart possible de 2 min maximum avec l’affiche officielle).";
 
     const salahIdx = [0,2,3,4,5];
     const M = rec.t.map(toMin);
