@@ -364,6 +364,7 @@
     // Heure d été : Dhohr bloqué à cette heure
     dhohrEte: "14:00",
     jumua: "13:15",
+    iqamaJumua: 30,
     confirmes: [8, 9, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -518,7 +519,7 @@
       const heure = src.t[i];
       const jum = (i === 2 && src.jumua);        // vendredi : ligne Dhohr → Jumu'a
       const nom = jum ? ["Jumu'a","الجمعة"] : NAMES[i];
-      const iq = jum ? null : CFG.iqama[i];
+      const iq = jum ? CFG.iqamaJumua : CFG.iqama[i];
       const row = document.createElement("div");
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
