@@ -323,9 +323,6 @@
 
   <div class="list" id="list"></div>
 
-  <div class="jumua" id="jumua" hidden>
-    <span>🕌</span><span>Salât al-Jumu'a &nbsp;·&nbsp; <b>13:15</b></span>
-  </div>
   </div>
 
   <div id="maj" hidden>
@@ -366,6 +363,7 @@
     iqama: [10, null, 10, 10, 5, 10],
     // Heure d été : Dhohr bloqué à cette heure
     dhohrEte: "14:00",
+    jumua: "13:15",
     confirmes: [8, 9, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -421,6 +419,7 @@
   function computeAll(dt){
     const r=_computeRaw(dt);
     if (_parisTZ(dt)===2) r.t[2]=CFG.dhohrEte;   // heure d été : Dhohr fixe
+    if (dt.getDay()===5){ r.t[2]=CFG.jumua; r.jumua=true; }   // vendredi : Jumu'a remplace Dhohr
     return r;
   }
   function _computeRaw(dt){
@@ -515,18 +514,19 @@
     list.innerHTML = "";
     rec.t.forEach((time,i)=>{
       const roule = roleLendemain(i);            // prochaine prière arrivée → lendemain
-      const heure = roule ? demain.t[i] : time;
+      const src = roule ? demain : rec;
+      const heure = src.t[i];
+      const jum = (i === 2 && src.jumua);        // vendredi : ligne Dhohr → Jumu'a
+      const nom = jum ? ["Jumu'a","الجمعة"] : NAMES[i];
+      const iq = jum ? null : CFG.iqama[i];
       const row = document.createElement("div");
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
-        `<div class="name">${NAMES[i][0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
-        `<div class="t"><span class="cd">${i===evIdx ? "<b>"+rebours+"</b>" : ""}</span>${heure}<span class="iq">${CFG.iqama[i]!=null ? "+"+CFG.iqama[i] : ""}</span></div>`+
-        `<div class="ar">${NAMES[i][1]}</div>`;
+        `<div class="name">${nom[0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
+        `<div class="t"><span class="cd">${i===evIdx ? "<b>"+rebours+"</b>" : ""}</span>${heure}<span class="iq">${iq!=null ? "+"+iq : ""}</span></div>`+
+        `<div class="ar">${nom[1]}</div>`;
       list.appendChild(row);
     });
-
-    // Jumu'a le vendredi
-    document.getElementById("jumua").hidden = (now.getDay() !== 5);
   }
 
   render();
