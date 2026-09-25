@@ -511,7 +511,8 @@
     let evIdx = rec.t.findIndex(x => toMin(x) > nowMin), evDiff;
     if (evIdx >= 0) evDiff = M[evIdx] - nowMin;
     else { evIdx = 0; evDiff = (1440 - nowMin) + toMin(demain.t[0]); }   // Fajr de demain
-    const rebours = "-" + Math.floor(evDiff/60) + ":" + String(evDiff%60).padStart(2,"0");
+    const rebours = evDiff < 60 ? "-" + evDiff + "min"
+                  : "-" + Math.floor(evDiff/60) + "h" + String(evDiff%60).padStart(2,"0");
 
     const list = document.getElementById("list");
     list.innerHTML = "";
