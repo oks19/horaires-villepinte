@@ -182,6 +182,8 @@
     text-align: left;
     opacity: .7;
   }
+  .row .t .iq.max { line-height: 1; vertical-align: middle; }
+  .row .t .iq.max small { display: block; font-size: .75em; letter-spacing: .03em; }
   .row .t .cd {
     display: inline-block;
     width: 3.9em;             /* place réservée sur toutes les lignes : heures alignées */
@@ -524,7 +526,7 @@
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
         `<div class="name">${nom[0]}${roule ? '<span class="morrow">demain</span>' : ''}</div>`+
-        `<div class="t"><span class="cd">${i===evIdx ? "<b>"+rebours+"</b>" : ""}</span>${heure}<span class="iq">${iq!=null ? "+"+iq : ""}</span></div>`+
+        `<div class="t"><span class="cd">${i===evIdx ? "<b>"+rebours+"</b>" : ""}</span>${heure}<span class="iq${jum ? " max" : ""}">${iq!=null ? "+"+iq : ""}${jum ? "<small>max</small>" : ""}</span></div>`+
         `<div class="ar">${nom[1]}</div>`;
       list.appendChild(row);
     });
