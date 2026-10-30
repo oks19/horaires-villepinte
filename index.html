@@ -363,8 +363,14 @@
     },
     // Délai avant l iqama (min), affiché à droite de l heure — null = pas affiché (Chourouk)
     iqama: [10, null, 10, 10, 5, 10],
-    // Heure d été : Dhohr bloqué à cette heure
+    // Dhohr en groupe : heure fixe (été / hiver)
     dhohrEte: "14:00",
+    dhohrHiver: "13:00",
+    // Heures FIXES des prières en groupe (communiqués de la mosquée), à partir de la date "du"
+    // index : 0 Fajr, 1 Chourouk, 2 Dhohr, 3 Asr, 4 Maghrib, 5 Isha
+    fixes: [
+      { du: "2026-11-05", t: { 3: "15:00", 5: "18:40" } }   // communiqué : Asr 15h00, Isha 18h40
+    ],
     jumua: "13:00",
     iqamaJumua: 30,
     confirmes: [8, 9, 10, 11, 12]   // mois vérifiés sur affiche officielle
@@ -458,7 +464,9 @@
   // ---- Horaires calculés d'un jour (dt = objet Date) ----
   function computeAll(dt){
     const r=_computeRaw(dt);
-    if (_parisTZ(dt)===2) r.t[2]=CFG.dhohrEte;   // heure d été : Dhohr fixe
+    r.t[2] = _parisTZ(dt)===2 ? CFG.dhohrEte : CFG.dhohrHiver;   // Dhohr fixe (été / hiver)
+    const ymd = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+    for (const f of CFG.fixes) if (ymd >= f.du) for (const i in f.t) r.t[i] = f.t[i];   // heures fixes des communiqués
     if (dt.getDay()===5){ r.t[2]=CFG.jumua; r.jumua=true; }   // vendredi : Jumu'a remplace Dhohr
     return r;
   }
