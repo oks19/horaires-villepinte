@@ -373,6 +373,8 @@
     ],
     jumua: "13:00",
     iqamaJumua: 30,
+    // Isha à l heure fixe 18:40 (communiqué / hiver) → délai affiché +0
+    ishaFixe: "18:40", iqamaIshaFixe: 0,
     confirmes: [8, 9, 10, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -572,7 +574,9 @@
       const heure = src.t[i];
       const jum = (i === 2 && src.jumua);        // vendredi : ligne Dhohr → Jumu'a
       const nom = jum ? ["Jumu'a","الجمعة"] : NAMES[i];
-      const iq = jum ? CFG.iqamaJumua : CFG.iqama[i];
+      const iq = jum ? CFG.iqamaJumua
+               : (i === 5 && heure === CFG.ishaFixe) ? CFG.iqamaIshaFixe
+               : CFG.iqama[i];
       const row = document.createElement("div");
       row.className = "row" + (i === activeIdx ? " next" : "");
       row.innerHTML =
