@@ -369,12 +369,12 @@
     // Heures FIXES des prières en groupe (communiqués de la mosquée), à partir de la date "du"
     // index : 0 Fajr, 1 Chourouk, 2 Dhohr, 3 Asr, 4 Maghrib, 5 Isha
     fixes: [
-      { du: "2026-11-05", t: { 3: "15:00", 5: "18:40" } }   // communiqué : Asr 15h00, Isha 18h40
+      { du: "2026-11-05", t: { 3: "15:00" } }   // communiqué : Asr 15h00 (Isha 18h40 reporté par la mosquée le 06/11/2026)
     ],
     jumua: "13:00",
     iqamaJumua: 30,
-    // Isha à l heure fixe 18:40 (communiqué / hiver) → délai affiché +0
-    ishaFixe: "18:40", iqamaIshaFixe: 0,
+    // Isha à heure FIXE (communiqué ou régime fixe d hiver) → délai affiché +0
+    iqamaIshaFixe: 0,
     confirmes: [8, 9, 10, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -493,7 +493,7 @@
     // Isha au moins 60 min après Maghrib), sinon on garde l heure du jour (ex. printemps/été)
     for (const f of CFG.fixes) if (ymd >= f.du) for (const i in f.t){
       const mini = (+i===5) ? toMin(r.t[4]) + 60 : toMin(r.t[i]);
-      if (toMin(f.t[i]) >= mini) r.t[i] = f.t[i];
+      if (toMin(f.t[i]) >= mini){ r.t[i] = f.t[i]; if (+i===5) r.ishaFixe = true; }
     }
     if (dt.getDay()===5){ r.t[2]=CFG.jumua; r.jumua=true; }   // vendredi : Jumu'a remplace Dhohr
     return r;
@@ -514,7 +514,7 @@
     if(ir.type==='gap'){ I=_mm(toMin(Mg)+ir.v); }
     else if(ir.type==='fixe'){ I=ir.v; }
     else { let ti=18; for(let i=0;i<3;i++) ti=_angT(ir.v,ti,'cw'); I=_fmt(adj(ti)+(ir.off||0)/60); }
-    return { t:[F,C,Do,A,Mg,I], h:_hijri(dt), confirme: CFG.confirmes.includes(mon), source:'calcul' };
+    return { t:[F,C,Do,A,Mg,I], h:_hijri(dt), confirme: CFG.confirmes.includes(mon), source:'calcul', ishaFixe: ir.type==='fixe' };
   }
 
   // (bloc de données mensuel supprimé — les horaires sont désormais calculés)
@@ -596,7 +596,7 @@
       const jum = (i === 2 && src.jumua);        // vendredi : ligne Dhohr → Jumu'a
       const nom = jum ? ["Jumu'a","الجمعة"] : NAMES[i];
       const iq = jum ? CFG.iqamaJumua
-               : (i === 5 && heure === CFG.ishaFixe) ? CFG.iqamaIshaFixe
+               : (i === 5 && src.ishaFixe) ? CFG.iqamaIshaFixe
                : CFG.iqama[i];
       const row = document.createElement("div");
       row.className = "row" + (i === activeIdx ? " next" : "");
