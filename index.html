@@ -354,12 +354,12 @@
     off: { fajr:-10, chourouk:2, dohr:5, asr:0, maghrib:1 },   // décalages (min)
     // Régime Isha par mois (1=janv … 12=déc) — type: 'angle' | 'gap' | 'fixe'
     isha: {
-      1:{type:'fixe',  v:'18:40'},     2:{type:'fixe',  v:'18:40'},
+      1:{type:'gap',   v:90},          2:{type:'gap',   v:90},
       3:{type:'gap',   v:90},          4:{type:'gap',   v:90},
       5:{type:'angle', v:12, off:3},   6:{type:'angle', v:12, off:3},
       7:{type:'angle', v:12, off:3},   8:{type:'angle', v:12, off:3},
       9:{type:'gap',   v:90},         10:{type:'gap',   v:90},
-     11:{type:'gap',   v:90},         12:{type:'fixe',  v:'18:40'}
+     11:{type:'gap',   v:90},         12:{type:'gap',   v:90}
     },
     // Délai avant l iqama (min), affiché à droite de l heure — null = pas affiché (Chourouk)
     iqama: [10, null, 10, 10, 5, 10],
@@ -375,6 +375,8 @@
     iqamaJumua: 30,
     // Isha à heure FIXE (communiqué ou régime fixe d hiver) → délai affiché +0
     iqamaIshaFixe: 0,
+    // Plancher Isha : dès que l heure du jour descend à 18:40 ou moins, Isha est bloqué à 18:40 (+0)
+    ishaPlancher: { v: "18:40", du: "2026-11-18" },
     confirmes: [8, 9, 10, 11, 12]   // mois vérifiés sur affiche officielle
   };
   const HMOIS = ["Muharram","Safar","Rabī' al-awwal","Rabī' ath-thānī","Jumādā al-ūlā","Jumādā ath-thāniya","Rajab","Sha'bān","Ramadān","Shawwāl","Dhū al-qa'da","Dhū al-hijja"];
@@ -495,6 +497,7 @@
       const mini = (+i===5) ? toMin(r.t[4]) + 60 : toMin(r.t[i]);
       if (toMin(f.t[i]) >= mini){ r.t[i] = f.t[i]; if (+i===5) r.ishaFixe = true; }
     }
+    if (ymd >= CFG.ishaPlancher.du && toMin(r.t[5]) <= toMin(CFG.ishaPlancher.v)){ r.t[5] = CFG.ishaPlancher.v; r.ishaFixe = true; }
     if (dt.getDay()===5){ r.t[2]=CFG.jumua; r.jumua=true; }   // vendredi : Jumu'a remplace Dhohr
     return r;
   }
